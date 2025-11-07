@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
 1-batch_processing.py
-Implements batch processing for the user_data table.
+Implements batch processing for the user_data table using generators.
 """
 
 import mysql.connector
@@ -21,18 +21,18 @@ def stream_users_in_batches(batch_size):
     for row in cursor:
         batch.append(row)
         if len(batch) == batch_size:
-            yield batch
+            yield batch  # yield a batch
             batch = []
     if batch:
-        yield batch
+        yield batch  # yield remaining rows
 
     cursor.close()
     conn.close()
 
 
 def batch_processing(batch_size):
-    """Processes each batch to filter users over the age of 25 and yields them."""
-    for batch in stream_users_in_batches(batch_size):
+    """Generator that processes each batch and yields users over age 25."""
+    for batch in stream_users_in_batches(batch_size):  # loop 1
         for user in batch:  # loop 2
             if user['age'] > 25:
-                print(user)
+                yield user  # <-- now yields instead of printing
