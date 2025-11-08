@@ -9,13 +9,11 @@ def log_queries(func):
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        # Get the query from arguments or kwargs
-        query = kwargs.get('query') if 'query' in kwargs else args[0] if args else None
+        query = kwargs.get('query') if 'query' in kwargs else (args[0] if args else None)
         if query:
-            print(f"[LOG] Executing SQL Query: {query}")
+            print(f"Executing SQL Query: {query}")
         else:
-            print("[LOG] No SQL query provided.")
-        # Execute the original function
+            print("No SQL query provided.")
         return func(*args, **kwargs)
     return wrapper
 
@@ -31,7 +29,6 @@ def fetch_all_users(query):
     return results
 
 
-# Fetch and print users while logging the query
 if __name__ == "__main__":
     users = fetch_all_users(query="SELECT * FROM users")
     for user in users:
