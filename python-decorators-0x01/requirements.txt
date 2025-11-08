@@ -1,0 +1,1 @@
+echo "sqlite3" > requirements.txt
