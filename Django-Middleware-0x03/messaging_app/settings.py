@@ -162,18 +162,24 @@ STATICFILES_DIRS = [
 ]
      
 # Logging configuration
-LOGGING = {     
+
+LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+        'request_file': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'requests.log'),
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG' if DEBUG else 'INFO',
+    'loggers': {
+        'request_logger': {
+            'handlers': ['request_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
+
 
 AUTH_USER_MODEL = 'chats.User'
