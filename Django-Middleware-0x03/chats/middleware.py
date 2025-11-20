@@ -4,6 +4,8 @@ import logging
 import pytz  # optional, but preferred
 from django.http import JsonResponse
 from collections import defaultdict
+from django.http import HttpResponseForbidden
+
 
 class RequestLoggingMiddleware:
     def __init__(self, get_response):
@@ -85,3 +87,21 @@ class OffensiveLanguageMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
+
+
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Allow superusers or moderators
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponseForbidden("You must be logged in to access this resource.")
+
+        # Assuming your User model has a 'role' attribute
+        if hasattr(user, 'role') and user.role.lower() not in ['admin', 'moderator']:
+            return HttpResponseForbidden("You do not have permission to perform this action.")
+
+        response = self.get_response(request)
+        return response
